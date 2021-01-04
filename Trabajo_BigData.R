@@ -27,6 +27,12 @@ library(ggplot2)
 
 
 
+#aclaración durante el tiempo que estuvimos analizando estas páginas la cantidad de libros mostrados por página
+#fueron  variando , por eso decidimos usar lenght() para contar la cantidad de libros antes de crear
+#un data frame, si toca ocurrir que las paginas modifican la cantidad de libros nosotros 
+#pusimos un #IMPORTANTE !!!  junto al número que se tendrá que modificar dependiendo lo contado por
+#length() con anterioridad. 
+
 
 
 #######################################################################################
@@ -77,11 +83,14 @@ Lugar_descuento <- "div.descuento-v2.color-white.position-relative"
 des_html <- html_nodes(Pag_busca,Lugar_descuento)#para identificar todos los sectores donde se encuentran el descuento de los libros en la pagina 
 des_text <- html_text(des_html)#para traducir lo anterior hecho  e identificar los descuentos 
 des_lim <- gsub("\\%dcto","",des_text)# Para limpiar datos que no necesitamos 
+des_lim
 descuento <- as.numeric(des_lim) # Para limpiar datos que no necesitamos
 descuento
 
+
 length(busca_nombre) #lo siguiente es para contar la cantidad de libros que se encuentran en la pagina 
-Lugar <- seq(1,78)# para asignar un numero a cada libro (se cambia el ultimo número dependiendo del total de libros)
+#IMPORTANTE !!!! esto se MODIFICA dependiendo de lo anterio contado con el lenght
+Lugar <- seq(1,74)#IMPORTANTE !!!!! para asignar un numero a cada libro (se cambia el ultimo número dependiendo del total de libros)
 Lugar
 #unir datos y creamos un data frame donde las columnas tienen los siguientes nombres 
 #Lugar: aquí se encuentra la posición de los libros dentro de la pagina 
@@ -174,7 +183,8 @@ data.class(PreciosP)
 PreciosP
 
 length(punto_nombre)#lo siguiente es para contar la cantidad de libros que se encuentran en la pagina 
-Orden <- seq(1,30)#para asignar un numero a cada libro (se cambia el ultimo número dependiendo del total de libros)
+#IMPORTANTE !!!! esto se MODIFICA  dependiendo de lo anterio contado con el lenght
+Orden <- seq(1,30)#IMPORTANTE!!! para asignar un numero a cada libro (se cambia el ultimo número dependiendo del total de libros)
 
 #PAGINA 2 
 link_punto2 <- "https://www.puntoycomalibros.com/libros-de/ficcion-01/?pagSel=2&cuantos=30&orden=prioridad%2C+fecha_edicion+desc&codMateria=01&tipoArticulo=L"
@@ -199,8 +209,9 @@ PreciosP2 <- as.numeric(limpiadorP2)
 data.class(PreciosP2)
 PreciosP2
 
-length(punto_nombre2)#lo siguiente es para contar la cantidad de libros que se encuentran en la pagina 
-Orden2 <- seq(31,60)#para asiganar un numero a cada libro (se cambia el ultimo número dependiendo del total de libros)
+length(punto_nombre2)#lo siguiente es para contar la cantidad de libros que se encuentran en la pagina
+#IMPORTANTE !!!! esto se MODIFICA dependiendo de lo anterio contado con el lenght
+Orden2 <- seq(31,60)#IMPORTANTE!!!! para asiganar un numero a cada libro (se cambia el ultimo número dependiendo del total de libros)
 
 
 punto_pagina <- rep(c("Punto y coma"),time=c(30))
@@ -243,7 +254,7 @@ GRAFIC_Punto2   <- ggplot(data = Punto_y_coma2,
   geom_col(width = .8,colour = "pink",fill= "cyan") +
   geom_line(size = 1,colour = "green")+
   
-  labs(title = "Punto y Coma Precios pag 1 ")
+  labs(title = "Punto y Coma Precios pag 2 ")
 GRAFIC_Punto2
 
 
@@ -293,12 +304,15 @@ PrecioTOP <- gsub("\\  ","",Precio_chTOP) # Para limpiar datos que no necesitamo
 PrecioTOP
 
 #COMO SABEMOS QUE EN ESTA PAGINA SE HACE UN TOP 10 DE LOS LIBROS MAS VENDIDOS CREAMOS ESTE VECTOR PARA ASIGNAR LOS NUMEROS CORRESPONDIENTES A LOS LIBROS 
-TOP10 <- seq(1,10) 
+length(NombresTOP)#lo siguiente es para contar la cantidad de libros que se encuentran en la pagina
+#IMPORTANTE !!!! esto se MODIFICA dependiendo de lo anterio contado con el lenght
+TOP10 <- seq(1,15)#IMPORTANTE !!!!!!!
 TOP10
 
 #Donde compararemos los libros de ficción y no ficción de esta página crearemos el vector ficción donde se repite ficción 10 veces para poder asignarles este término a 
-#los libros de ficción en el data frame 
-Ficción <- rep(c("Ficcion"),time=c(10)) 
+#los libros de ficción en el data frame
+#IMPORTANTE !!!! esto se repite dependiendo de lo anterio contado con el lenght
+Ficción <- rep(c("Ficcion"),time=c(15))#IMPORTANTE!!! 
 
 #unimos los datos y creamos un data frame donde las columnas tienen los siguientes nombres 
 #TOP_10: aquí se encuentra la posición de los libros dentro de la pagina 
@@ -352,9 +366,10 @@ Preciof_ch <- gsub("Precio especial","",Preciof_ch)# Para limpiar datos que no n
 Preciof_ch <- gsub("\\.","",Preciof_ch)# Para limpiar datos que no necesitamos 
 Preciof_ch <- gsub ("\n","",Preciof_ch)# Para limpiar datos que no necesitamos 
 Preciof <- gsub("\\  ","",Preciof_ch)# Para limpiar datos que no necesitamos 
-
-#COMO SABEMOS QUE EN ESTA PAGINA SE HACE UN TOP 10 DE LOS LIBROS MAS VENDIDOS CREAMOS ESTE VECTOR PARA ASIGNAR LOS NUMEROS CORRESPONDIENTES A LOS LIBROS 
-TOP10f <- seq(1,10)
+#Se utiliza length para contar la cantidad de libros que tiene esta pagiana 
+length(Preciof)
+#IMPORTANTE !!!! esto se MODIFICA dependiendo de lo anterio contado con el lenght
+TOP10f <- seq(1,10)#IMPORTANTE!!!! 
 TOP10f
 #Donde compararemos los libros de ficción y no ficción de esta página crearemos el vector NO_Ficcion donde se repite ficción 10 veces para poder asignarles este término a 
 #los libros de ficción en el data frame 
@@ -367,7 +382,7 @@ NO_Ficción <- rep(c("No Ficcion"),time=c(10))
 #Precio: aquí se encuentra el valor de todos los libros 
 #Categoria: aquí se identifica de que categoría es el libro 
 TOP_10_LIBROS_no_FIC <- data_frame(TOP_10 = TOP10f,Libro = Nombresf,Precios = Preciof,categoria = NO_Ficción)
-
+view(TOP_10_LIBROS_no_FIC)
 # SE crea grafico   TOP 10 BOOKS NO FICCION  donde el eje x representa el nombre de los libros 
 #el eje   Y representa el precio de los libros. 
 GRAFIC_TOP10_NO <- ggplot(data = TOP_10_LIBROS_no_FIC,
@@ -410,8 +425,9 @@ todo_topbooks %>%
 ##Para terminar queremos comparar los precios de "Busca Libre y "Punto y Coma" 
 
 #Para eso creamos dos data frame que tienen que tener el mismo contenido 
-
-Busca_pagina <-  rep(c("Busca libre"),time=c(78))
+length(busca_nombre) #para buscar cuantos libros tenmos y usar en lo siguiente 
+#IMPORTANTE !!!! esto se repite dependiendo de lo anterio contado con el lenght(busca_nombre) se modifica el numero
+Busca_pagina <-  rep(c("Busca libre"),time=c(74))#IMPORTANTE !!!! 
 compara_busca <- data_frame(Lugar = Lugar,  Libro = busca_nombre,Precio = PreciosB, Pagina = Busca_pagina)
 view(compara_busca)
 
