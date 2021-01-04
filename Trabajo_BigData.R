@@ -14,10 +14,12 @@
 #Nuestro trabajo consiste en extraer datos de tres páginas web dedicadas a la venta de libros 
 #Estas páginas son https://www.buscalibre.com --- www.puntoycomalibros.com --- www.top10books.cl
 #extraeremos datos de la sección de libros de ficción y los analizaremos 
+#Decidimos analizar las primeras páginas de las secciones de ficción para poder compararlas entre ellas 
+#esto último debido a que todas poseen una cantidad de libros distintos y hace imposible realizar una comparación justa 
 
 ####Desarrollo de la extracción de datos
 
-
+setwd("C:/Users/matie/Desktop/Big Data/Trabajo_BigData")
 rm(list = ls())
 #partiremos activando los paquetes que usaremos durante la extracción de datos 
 library(rvest)
@@ -90,7 +92,7 @@ descuento
 
 length(busca_nombre) #lo siguiente es para contar la cantidad de libros que se encuentran en la pagina 
 #IMPORTANTE !!!! esto se MODIFICA dependiendo de lo anterio contado con el lenght
-Lugar <- seq(1,74)#IMPORTANTE !!!!! para asignar un numero a cada libro (se cambia el ultimo número dependiendo del total de libros)
+Lugar <- seq(1,77)#IMPORTANTE !!!!! para asignar un numero a cada libro (se cambia el ultimo número dependiendo del total de libros)
 Lugar
 #unir datos y creamos un data frame donde las columnas tienen los siguientes nombres 
 #Lugar: aquí se encuentra la posición de los libros dentro de la pagina 
@@ -122,19 +124,24 @@ GRAFIC_c
 
 
 #Anlizaremos los DCTOS DE BUSCALIBRE 
+#Decidimos ordenar los libros haciendo dos tablas la primera con los descuentos mayores o iguales a 50 % y la segunda con los descuentos menores o iguales a 50%
+#Lugar: aquí se encuentra la posición de los libros dentro de la pagina 
+#Libro: aquí se encuentran el nombre de los libros dentro de la pagina 
+#Precio: aquí se encuentra el valor de todos los libros con el descuento ya aplicado 
+#Porcentaje_DCTO: aquí encontramos el porcentaje de descuento de los libros 
 
+#### >= 50% 
 dctomas50 <-  buscarlibre_fic %>% 
   filter(Porcentaje_DCTO >= 50) #vemos los libros que tienen un descuento mayor o igual al 50%
 view(dctomas50)
-
 vermaxdcto <- buscarlibre_fic %>% 
   summarise(Max_dcto =max(Porcentaje_DCTO))#vemos el descuento más alto de la página (en el momento de realizar este código el descuento es del 80%)
 view(vermaxdcto)
 maxdctolibro <- buscarlibre_fic %>% 
-  filter(Porcentaje_DCTO == 80)#vemos los libros que tienen el porcentaje
+  filter(Porcentaje_DCTO == 80)#vemos los libros que tienen el porcentaje de descuento mas alto 
 view(maxdctolibro)
 
-###
+###<= 50%
 
 dctomen50 <-  buscarlibre_fic %>% 
   filter(Porcentaje_DCTO <= 50) #vemos los libros que tienen un descuento menor o igual al 50%
@@ -143,9 +150,13 @@ vermindcto <- buscarlibre_fic %>%
   summarise(min_dcto =min(Porcentaje_DCTO))#Vemos el descuento más bajo de la página(en el momento de realizar este código es del 15 %) 
 view(vermindcto)
 mindctolibro <- buscarlibre_fic %>% 
-  filter(Porcentaje_DCTO == 15)
+  filter(Porcentaje_DCTO == 15)#vemos los libros que tienen el porcentaje de descuento mas bajo 
 view(mindctolibro)
-
+###
+#Quisimos sacar el promedio de precios de esta pagina  para realizar una posterior comparación 
+PromedioB <- buscarlibre_fic %>%
+  summarise(Promediobus = mean(Precio))
+view( PromedioB)
 #######################################################################################
 #######################################################################################
 #######################################################################################
@@ -213,8 +224,15 @@ length(punto_nombre2)#lo siguiente es para contar la cantidad de libros que se e
 #IMPORTANTE !!!! esto se MODIFICA dependiendo de lo anterio contado con el lenght
 Orden2 <- seq(31,60)#IMPORTANTE!!!! para asiganar un numero a cada libro (se cambia el ultimo número dependiendo del total de libros)
 
+#IMPORTANTE !!!! esto se repite dependiendo de lo anterio contado con el lenght(busca_nombre) se modifica el numero
 
-punto_pagina <- rep(c("Punto y coma"),time=c(30))
+punto_pagina <- rep(c("Punto y coma"),time=c(30)) #IMPORTANTE !!!!
+
+#Creamos los data frames por separado de las dos pagina 
+#Lugar: aquí se encuentra la posición de los libros dentro de la pagina 
+#Libro: aquí se encuentran el nombre de los libros dentro de la pagina 
+#Precio: aquí se encuentra el valor de todos los libros con el descuento ya aplicado 
+#Pagina : pagina web que vende el libro 
 Punto_y_coma1 <- data_frame(Lugar = Orden ,  Libro = punto_nombre,Precio = PreciosP,Pagina = punto_pagina) 
 view(Punto_y_coma1)
 Punto_y_coma2 <- data_frame(Lugar = Orden2 ,  Libro = punto_nombre2,Precio = PreciosP2,Pagina = punto_pagina)
@@ -222,6 +240,10 @@ view(Punto_y_coma2)
 
 #Por último unimos los datos de las dos páginas en un solo data frame que usaremos más tarde para comparar  
 #el nombre de este data frame es todo_punto y coma y tiene los unidos de punto_y_coma1 y punto_y_coma2
+#Lugar: aquí se encuentra la posición de los libros dentro de la pagina 
+#Libro: aquí se encuentran el nombre de los libros dentro de la pagina 
+#Precio: aquí se encuentra el valor de todos los libros con el descuento ya aplicado 
+#Pagina : pagina web que vende el libro 
 compara_punto_y_coma <- rbind(Punto_y_coma1,Punto_y_coma2)
 view(compara_punto_y_coma)
 
@@ -259,10 +281,18 @@ GRAFIC_Punto2
 
 
 
+#Quisimos ver todos los libros menores a 15000 pesos en punto y coma
+#Lugar: aquí se encuentra la posición de los libros dentro de la pagina 
+#Libro: aquí se encuentran el nombre de los libros dentro de la pagina 
+#Precio: aquí se encuentra el valor de todos los libros con el descuento ya aplicado 
 
-
-
-
+menor_a <- compara_punto_y_coma%>% 
+  filter(Precio <= 15000)
+view(menor_a)
+#Quisimos sacar el promedio de precios de esta pagina  para realizar una posterior comparación 
+Promedio <- compara_punto_y_coma %>% 
+ summarise(PromedioP = mean(PreciosP))
+view(Promedio) 
 #######################################################################################
 #######################################################################################
 #######################################################################################
@@ -317,7 +347,7 @@ Ficción <- rep(c("Ficcion"),time=c(15))#IMPORTANTE!!!
 #unimos los datos y creamos un data frame donde las columnas tienen los siguientes nombres 
 #TOP_10: aquí se encuentra la posición de los libros dentro de la pagina 
 #Libro: aquí se encuentran el nombre de los libros dentro de la pagina 
-#Precio: aquí se encuentra el valor de todos los libros c
+#Precio: aquí se encuentra el valor de todos los libros 
 #Categoria: aquí se identifica de que categoría es el libro 
 TOP_10_LIBROS_FIC <- data_frame(TOP_10 = TOP10,Libro = NombresTOP,Precios = PrecioTOP,categoria = Ficción)
 view(TOP_10_LIBROS_FIC)
@@ -396,7 +426,10 @@ GRAFIC_TOP10_NO
 
 #Por último unimos los data frame y creamos el data frame llamado todo_topboks 
 #este data frame tiene unido los dos anteriores hechos junto a sus respectivos detalles 
-
+#TOP_10: aquí se encuentra la posición de los libros dentro de la pagina 
+#Libro: aquí se encuentran el nombre de los libros dentro de la pagina 
+#Precio: aquí se encuentra el valor de todos los libros 
+#Categoria: aquí se identifica de que categoría es el libro
 names(TOP_10_LIBROS_no_FIC)
 names(TOP_10_LIBROS_FIC)
 todo_topbooks <- rbind(TOP_10_LIBROS_FIC,TOP_10_LIBROS_no_FIC)
@@ -406,12 +439,14 @@ view (todo_topbooks)
 
 
 #por último queremos ver el top 5 de los libros de ficción y no ficción 
-#para eso creamos un filtro que nos muestre los 5 primeros libros más vendidos de ficción y no ficcion -
-todo_topbooks %>% 
+#para eso creamos un filtro que nos muestre los 5 primeros libros más vendidos de ficción y no ficcion 
+#TOP_10: aquí se encuentra la posición de los libros dentro de la pagina 
+#Libro: aquí se encuentran el nombre de los libros dentro de la pagina 
+#Precio: aquí se encuentra el valor de todos los libros 
+#Categoria: aquí se identifica de que categoría es el libro
+TOP5 <-todo_topbooks %>% 
   filter(TOP_10 <= 5)
-
-
-
+view(TOP5)
 #######################################################################################
 #######################################################################################
 #######################################################################################
@@ -427,11 +462,11 @@ todo_topbooks %>%
 #Para eso creamos dos data frame que tienen que tener el mismo contenido 
 length(busca_nombre) #para buscar cuantos libros tenmos y usar en lo siguiente 
 #IMPORTANTE !!!! esto se repite dependiendo de lo anterio contado con el lenght(busca_nombre) se modifica el numero
-Busca_pagina <-  rep(c("Busca libre"),time=c(74))#IMPORTANTE !!!! 
+Busca_pagina <-  rep(c("Busca libre"),time=c(75))#IMPORTANTE !!!! 
 compara_busca <- data_frame(Lugar = Lugar,  Libro = busca_nombre,Precio = PreciosB, Pagina = Busca_pagina)
 view(compara_busca)
 
-
+#Ahora unimos los data frames compara_busca y compara_punto_y_coma anteriormente echo 
 Busca_y_punto <- rbind(compara_busca,compara_punto_y_coma)
 view(Busca_y_punto)
 
