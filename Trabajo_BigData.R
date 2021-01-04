@@ -92,7 +92,7 @@ descuento
 
 length(busca_nombre) #lo siguiente es para contar la cantidad de libros que se encuentran en la pagina 
 #IMPORTANTE !!!! esto se MODIFICA dependiendo de lo anterio contado con el lenght
-Lugar <- seq(1,77)#IMPORTANTE !!!!! para asignar un numero a cada libro (se cambia el ultimo número dependiendo del total de libros)
+Lugar <- seq(1,75)#IMPORTANTE !!!!! para asignar un numero a cada libro (se cambia el ultimo número dependiendo del total de libros)
 Lugar
 #unir datos y creamos un data frame donde las columnas tienen los siguientes nombres 
 #Lugar: aquí se encuentra la posición de los libros dentro de la pagina 
